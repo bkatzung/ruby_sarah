@@ -1,5 +1,3 @@
-$LOAD_PATH << '../lib/sarah'
-
 require 'minitest/autorun'
 require 'sarah'
 
