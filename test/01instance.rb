@@ -1,7 +1,7 @@
 require 'minitest/autorun'
 require 'sarah'
 
-class TestSarah < MiniTest::Unit::TestCase
+class TestSarah_01 < MiniTest::Unit::TestCase
 
     def setup
 	@s = Sarah.new

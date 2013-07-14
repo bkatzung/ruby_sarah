@@ -29,13 +29,16 @@ class Sarah
     # hash and the requested key (or nil for a shift or pop on an empty
     # sequential array).
     #
-    # @param opts [Array] Setup options.
+    # @param opts [Hash] Setup options.
     # @option opts :default The default value to return for a non-existent key.
-    # @option opts :default_proc The default proc to call for a non-existent
-    #   key.
-    # @option opts :array An array (or hash!) to use for initialization (first).
-    # @option opts :hash A hash (or array!) to use for initialization (second).
-    # @option opts :from An array or hash to use for initialization (third).
+    # @option opts [Proc] :default_proc The default proc to call for a
+    #   non-existent key.
+    # @option opts [Array, Hash] :array An array (or hash!) to use for
+    #   initialization (first).
+    # @option opts [Hash, Array] :hash A hash (or array!) to use for
+    #   initialization (second).
+    # @option opts [Array, Hash] :from An array or hash to use for
+    #   initialization (third).
     def initialize (opts = {}, &block)
 	clear
 	@default = opts[:default]
@@ -272,6 +275,8 @@ class Sarah
 	@seq.push *vlist
 	self
     end
+
+    alias_method :<<, :push
 
     # Delete by sequential or random-access key, returning any existing value
     # (or the default or block value, otherwise).

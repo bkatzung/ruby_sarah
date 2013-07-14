@@ -1,7 +1,7 @@
 require 'minitest/autorun'
 require 'sarah'
 
-class TestSarah < MiniTest::Unit::TestCase
+class TestSarah_04 < MiniTest::Unit::TestCase
 
     def test_stack
 	s = Sarah.new
@@ -11,6 +11,12 @@ class TestSarah < MiniTest::Unit::TestCase
 	assert_equal(4, s.shift, "shift")
 	assert_equal(3, s.pop, "pop")
 	assert_equal([5, 6, 1, 2], s.seq, "after shift, pop")
+    end
+
+    def test_left_shift
+	s = Sarah.new
+	s << 1 << 2 << 3
+	assert_equal([1, 2, 3], s.seq, "<<")
     end
 
     def test_append

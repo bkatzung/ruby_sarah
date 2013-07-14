@@ -1,0 +1,8 @@
+2013-07-13 Version 0.0.3
+	Added << alias for push.
+
+2013-07-08 Version 0.0.2
+	Packaging fixes and some documentation cleanup.
+
+2013-07-08 Version 0.0.1
+	First release.

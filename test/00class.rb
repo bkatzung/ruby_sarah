@@ -1,7 +1,7 @@
 require 'minitest/autorun'
 require 'sarah'
 
-class TestSarah < MiniTest::Unit::TestCase
+class TestSarah_00 < MiniTest::Unit::TestCase
 
     def test_cmethod_new
 	assert_respond_to Sarah, :new

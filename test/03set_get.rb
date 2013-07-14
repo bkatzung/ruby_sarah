@@ -1,7 +1,7 @@
 require 'minitest/autorun'
 require 'sarah'
 
-class TestSarah < MiniTest::Unit::TestCase
+class TestSarah_03 < MiniTest::Unit::TestCase
 
     def setup
 	@s = Sarah.new(:array => [1, 2], :hash => { :a => 3, :b => 4 })
