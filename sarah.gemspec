@@ -1,7 +1,7 @@
 Gem::Specification.new do |s|
   s.name         = "sarah"
-  s.version      = "0.0.3"
-  s.date         = "2013-07-13"
+  s.version      = "0.0.4"
+  s.date         = "2013-07-28"
   s.authors      = ["Brian Katzung"]
   s.email        = ["briank@kappacs.com"]
   s.homepage     = "http://rubygems.org/gems/sarah"
@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.license      = "MIT"
  
   s.files        = Dir.glob("lib/**/*") +
-  	%w{sarah.gemspec HISTORY.txt .yardopts}
+		   %w{sarah.gemspec HISTORY.txt .yardopts}
   s.test_files   = Dir.glob("test/**/*.rb")
   s.require_path = 'lib'
 end

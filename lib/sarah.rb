@@ -228,7 +228,7 @@ class Sarah
     def insert! (*ahlist)
 	ahlist.reverse_each do |ah|
 	    if ah.respond_to? :seq_values and ah.respond_to? :rnd
-		unshift @ah.seq_values
+		unshift *ah.seq_values
 		merge! ah.rnd
 	    elsif ah.respond_to? :each_pair
 		merge! ah

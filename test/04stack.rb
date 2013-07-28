@@ -27,12 +27,28 @@ class TestSarah_04 < MiniTest::Unit::TestCase
 	assert_equal({ :one => 1, :two => 2 }, s.rnd, "append hsh")
     end
 
+    def test_append_sarah
+	s1 = Sarah.new :array => [1, 2], :hash => { :three => 3 }
+	s2 = Sarah.new :array => [4, 5], :hash => { :six => 6 }
+	s1.append! s2
+	assert_equal([1, 2, 4, 5], s1.seq, "append sarah (array)")
+	assert_equal({ :three => 3, :six => 6 }, s1.rnd, "append sarah (hash)")
+    end
+
     def test_insert
 	s = Sarah.new
 	s.insert! [1], { :one => 1 }, [2], [3]
 	s.insert! [4], { :two => 2 }, [5], [6]
 	assert_equal([4, 5, 6, 1, 2, 3], s.seq, "insert ary")
 	assert_equal({ :one => 1, :two => 2 }, s.rnd, "insert hsh")
+    end
+
+    def test_insert_sarah
+	s1 = Sarah.new :array => [1, 2], :hash => { :three => 3 }
+	s2 = Sarah.new :array => [4, 5], :hash => { :six => 6 }
+	s1.insert! s2
+	assert_equal([4, 5, 1, 2], s1.seq, "insert sarah (array)")
+	assert_equal({ :three => 3, :six => 6 }, s1.rnd, "insert sarah (hash)")
     end
 
 end
