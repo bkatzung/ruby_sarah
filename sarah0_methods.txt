@@ -1,0 +1,33 @@
+#[]
+#[]=
+#append!
+#clear
+#default
+#default_proc
+#delete_key
+#each #each_pair
+#each_index
+#fetch
+#has_key?
+#insert!
+#keys
+#merge! #update
+#pop
+#push #<<
+#rnd
+#rnd_keys
+#rnd_size #rnd_length
+#rnd_values
+#seq #seq_values
+#seq_keys
+#seq_size #seq_length
+#seq_slice
+#seq_slice!
+#set
+#set_pairs #set_kv
+#shift
+#size #length
+#slice
+#slice!
+#unshift
+#values

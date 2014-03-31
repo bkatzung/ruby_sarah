@@ -1,0 +1,119 @@
+::[]
+::new
+::try_convert
+#&
+#|
+#*
+#+
+#-
+#<<
+#<=>
+#==
+#[]
+#[]=
+#assoc
+#at
+#bsearch
+#clear
+#collect
+#collect!
+#combination
+#compact
+#compact!
+	#compare_by_identity
+	#compare_by_identity?
+#concat
+#count
+#cycle
+	#default
+	#default=
+	#default_proc
+	#default_proc?
+#delete
+#delete_at
+#delete_if
+#drop
+#drop_while
+#each
+#each_index
+	#each_key
+	#each_pair
+	#each_value
+#empty?
+#eql?
+#fetch
+#fill
+#find_index
+#first
+#flatten
+#flatten!
+#frozen?
+	#has_key?
+	#has_value?
+#hash
+#include?
+#index
+#initialize_copy
+#insert
+#inspect
+	#invert
+#join
+#keep_if
+	#key
+	#key?
+	#keys
+#last
+#length
+#map
+#map!
+	#member?
+	#merge
+	#merge!
+#pack
+#permutation
+#pop
+#product
+#push
+#rassoc
+	#rehash
+#reject
+#reject!
+#repeated_combination
+#repeated_permutation
+#replace
+#reverse
+#reverse!
+#reverse_each
+#rindex
+#rotate
+#rotate!
+#sample
+#select
+#select!
+#shift
+#shuffle
+#shuffle!
+#size
+#slice
+#slice!
+#sort
+#sort!
+#sort_by!
+	#store
+#take
+#take_while
+#to_a
+#to_ary
+#to_h
+	#to_hash
+#to_s
+		#to_sarah
+#transpose
+#uniq
+#uniq!
+#unshift
+	#update
+	#value?
+	#values
+#values_at
+#zip

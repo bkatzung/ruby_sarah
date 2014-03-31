@@ -1,3 +1,21 @@
+2014-03-31 Version 2.0.0
+
+	Major rewrite. Note: #slice and #slice! are incompatible with
+	prior versions.
+
+	Sarahs can be set to negative mode :actual to allow negative
+	indexes to be actual keys instead of being relative to the end
+	of the array.
+
+	Sparse, integer-indexed elements are now stored separately from
+	the non-numerically keyed elements.
+
+	Elements in the sparse array are re-indexed on shift, unshift, and
+	delete, just like sequential elements. (Re-indexing never occurs
+	in negative mode :actual, however.)
+
+	Many more Array and Hash methods have been implemented.
+
 2013-07-28 Version 0.0.4
 	Fixed a bug in the insert! method.
 
