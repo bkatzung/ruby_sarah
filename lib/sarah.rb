@@ -24,8 +24,8 @@
 #  a[0] = a[-3] = 1       v = 1
 #  a[1] = a[-2] = 2       a[0] = a[-2] = 2
 #  a[2] = a[-1] = a hash  a[1] = a[-1] = a hash
-#  a[3][5] = :five        a[2][5] = :five
-#  a[3][:six] = 'hello'   a[2][:six] = 'hello'
+#  a[2][5] = :five        a[1][5] = :five
+#  a[2][:six] = 'hello'   a[1][:six] = 'hello'
 #
 # In contrast, using a Sarah looks like this:
 #
