@@ -42,27 +42,29 @@
 #
 # As of version 2.0.0, there are three major data structures internally:
 # * "seq" - an array of sequentially-indexed values beginning at index 0
-#   (except when negative actual keys are present; see {#negative_mode=}
+#   (except when negative actual keys are present; see {#negative_mode}
 #   :actual)
 # * "spr" - a hash representing a sparse array of all other
 #   numerically-indexed values
 # * "rnd" - a "random access" hash of all non-numerically keyed values
 #
 # The sequential and sparse parts are collectively referred to as "ary".
-# All three parts together are collectively referred to as "all".
+# In some contexts, the non-sequential (sparse and random) parts are
+# available as "nsq". All three parts together are collectively referred
+# to as "all".
 #
 # Some methods allow you to direct their action to all or specific parts
 # of the structure by specifying a corrsponding symbol, :seq, :spr, :ary,
-# :rnd, or :all.
+# :nsq, :rnd, or :all.
 #
 # @author Brian Katzung (briank@kappacs.com), Kappa Computer Solutions, LLC
 # @copyright 2013-2014 Brian Katzung and Kappa Computer Solutions, LLC
 # @license MIT License
-# @version 2.0.0
+# @version 2.1.0
 
 class Sarah
 
-    VERSION = "2.0.0"
+    VERSION = "2.1.0"
 
     # Private attributes:
     # seq [Array] An array of (zero-origin) sequential values.
@@ -87,8 +89,15 @@ class Sarah
 
     # @!attribute [r] negative_mode
     # @return [:actual|:error|:ignore]
-    # How negative indexes/keys are handled. Possible values are
-    # :actual, :error, and :ignore. See {#negative_mode=}.
+    # How negative indexes/keys are handled.
+    #
+    #  :actual - Negative keys represent themselves and are not treated
+    #    specially (although delete works like unset in this mode--values
+    #    are not reindexed)
+    #  :error (default) - Negative keys are interpreted relative to the
+    #    end of the array; keys < -@ary_next raise an IndexError
+    #  :ignore - Like :error, but keys < -@ary_next are treated as
+    #    non-existent on fetch and silently ignored on set
     attr_reader :negative_mode
 
     # ##### Class Methods #####
@@ -409,6 +418,8 @@ class Sarah
     # Remove nil values in place. In the case of the sequential and sparse
     # arrays, the remaining values are reindexed sequentially from 0.
     #
+    # See also {#reindex}.
+    #
     # @param which [:all|:ary|:rnd] Which data structures are compacted.
     # @return [Sarah]
     def compact! (which = :all)
@@ -480,7 +491,7 @@ class Sarah
 
     # Deletes each value for which the required block returns true.
     #
-    # Subsequent values are re-indexed except when {#negative_mode=}
+    # Subsequent values are re-indexed except when {#negative_mode}
     # :actual. See also {#unset_if}.
     #
     # The block is passed the current value and nil for the sequential
@@ -517,8 +528,8 @@ class Sarah
 
     # Delete by value.
     #
-    # Subsequent values are re-indexed except when {#negative_mode=} :actual.
-    # See also {#unset_value}.
+    # Subsequent values are re-indexed except when {#negative_mode} is
+    # :actual. See also {#unset_value}.
     #
     # @param what [Object] The value to be deleted
     # @param which [:all|:ary|:rnd] The data structures in which to delete.
@@ -751,25 +762,30 @@ class Sarah
 
     # Return the random-access hash keys.
     #
+    # Since 2.0.0 returns only the random-access keys. Since 2.1.0
+    # returns the non-sequential (sparse + random) keys like the
+    # pre-2.0.0 version.
+    #
     # @return [Array]
-    # @deprecated Please use {#keys} instead.
-    def rnd_keys; @rnd.keys; end
+    # @deprecated Please use {#keys} :nsq or #keys :rnd instead.
+    def rnd_keys; self.keys :nsq; end
 
     # Return the sequential array keys (indexes).
     #
     # @return [Array<Integer>]
-    # @deprecated Please use {#keys} instead.
-    def seq_keys; 0...@seq.size; end
+    # @deprecated Please use {#keys} :seq instead.
+    def seq_keys; self.keys :seq; end
 
     # Return an array of indexes and keys.
     #
-    # @param which [:all|:ary|:rnd|:seq|:spr] Which indexes and keys
-    #  to return. (Since 2.0.0)
+    # @param which [:all|:ary|:nsq|:rnd|:seq|:spr] Which indexes and keys
+    #  to return. (Since 2.0.0; :nsq since 2.1.0)
     # @return [Array]
     def keys (which = :all)
 	case which
 	when :all then keys(:seq) + keys(:spr) + @rnd.keys
 	when :ary then keys(:seq) + keys(:spr)
+	when :nsq then keys(:spr) + @rnd.keys
 	when :rnd then @rnd.keys
 	when :seq then (0...@seq.size).to_a
 	when :spr then @spr.keys.sort
@@ -787,15 +803,18 @@ class Sarah
 
     # Return the random-access hash size.
     #
-    # @deprecated Please use {#size} instead.
+    # Since 2.1.0, this returns the non-sequential (sparse + random)
+    # hash size, which is more closely reflects the pre-2.0.0 value.
+    #
+    # @deprecated Please use {#size} :rnd or #size :nsq instead.
     # @return [Integer]
-    def rnd_length; @rnd.size; end
+    def rnd_length; self.size :nsq; end
 
     alias_method :rnd_size, :rnd_length
 
     # Return the sequential array size.
     #
-    # @deprecated Please use {#size} instead.
+    # @deprecated Please use {#size} :seq instead.
     # @return [Integer]
     def seq_length; @seq.size; end
 
@@ -803,14 +822,15 @@ class Sarah
 
     # Return the number of stored values (AKA size or length).
     #
-    # @param which [:all|:ary|:rnd|:seq|:spr] The data structures
-    #  for which the (combined) size is to be returned. (Since 2.0.0)
+    # @param which [:all|:ary|:nsq|:rnd|:seq|:spr] The data structures
+    #  for which the (combined) size is to be returned. (Since 2.0.0;
+    #  :nsq since 2.1.0)
     # @return [Integer]
     def length (which = :all)
 	size = 0
 	case which when :all, :ary, :seq then size += @seq.size end
-	case which when :all, :ary, :spr then size += @spr.size end
-	case which when :all, :rnd then size += @rnd.size end
+	case which when :all, :ary, :nsq, :spr then size += @spr.size end
+	case which when :all, :nsq, :rnd then size += @rnd.size end
 	size
     end
 
@@ -835,14 +855,6 @@ class Sarah
 
     # Sets the negative mode, the manner in which negative integer
     # index/key values are handled.
-    #
-    #  :actual - Negative keys represent themselves and are not treated
-    #    specially (although delete works like unset in this mode--values
-    #    are not reindexed)
-    #  :error (default) - Negative keys are interpreted relative to the
-    #    end of the array; keys < -@ary_next raise an IndexError
-    #  :ignore - Like :error, but keys < -@ary_next are treated as
-    #    non-existent on fetch and silently ignored on set
     def negative_mode= (mode)
 	case mode
 	when :actual then @negative_mode = :actual
@@ -908,6 +920,22 @@ class Sarah
     # @return [Sarah]
     # @since 2.0.0
     def rehash; @spr.rehash; @rnd.rehash; self; end
+
+    # Reindex sparse array values sequentially after any existing
+    # sequential values (or else from index 0).
+    #
+    # This is an immediate in-place operation (not a mode) and is unaffected
+    # by the {#negative_mode}.
+    #
+    # @return [Sarah]
+    # @since 2.1.0
+    def reindex
+	if !@spr.empty?
+	    @seq.concat values(:spr)
+	    @spr, @ary_first, @ary_next = {}, 0, @seq.size
+	end
+	self
+    end
 
     # #repeated_combination is not implemented.
 
@@ -980,19 +1008,22 @@ class Sarah
 	end
     end
 
-    # Return the sparse array and random-access hash (for
+    # Return a copy of the merged sparse array and random-access hash (for
     # backward-compatibility only).
     #
+    # Through version 2.0.0, this returned the actual underlying random-access
+    # hash.
+    #
     # @return [Hash]
-    # @deprecated Please use {#to_h} instead.
-    def rnd; @rnd; end
+    # @deprecated Please use {#to_h} :nsq instead.
+    def rnd; self.to_h :nsq; end
 
     # Return the sparse array and random-access hash values (for
     # backward-compatibility only).
     #
     # @return [Array]
-    # @deprecated Please use {#values} instead.
-    def rnd_values; @spr.values + @rnd.values; end
+    # @deprecated Please use {#values} :nsq or #values :rnd instead.
+    def rnd_values; self.values :nsq; end
 
     # Rotate sequential and sparse array values into a sequential list.
     #
@@ -1023,9 +1054,11 @@ class Sarah
 
     # Return a copy of the sequential array values.
     #
+    # Prior to 2.0.0, this returned the actual underlying array.
+    #
     # @return [Array]
-    # @deprecated Please use {#values} instead.
-    def seq; Array.new(@seq); end
+    # @deprecated Please use {#values} :seq instead.
+    def seq; self.values :seq; end
 
     alias_method :seq_values, :seq
 
@@ -1202,27 +1235,29 @@ class Sarah
 
     # Return all or part of the structure in array representation.
     #
-    # @param which [:all|:ary|:rnd|:seq|:spr] The parts to represent.
+    # @param which [:all|:ary|:nsq|:rnd|:seq|:spr] The parts to represent.
+    #  (:nsq since 2.1.0)
     # @since 2.0.0
     def to_a (which = :all)
 	ary, hsh = [], {}
 	case which when :all, :ary, :seq then ary = @seq end
-	case which when :all, :ary, :spr then hsh.merge! @spr end
-	case which when :all, :rnd then hsh.merge! @rnd end
+	case which when :all, :ary, :nsq, :spr then hsh.merge! @spr end
+	case which when :all, :nsq, :rnd then hsh.merge! @rnd end
 	ary + [hsh]
     end
 
     # Return all or part of the structure in hash representation.
     #
-    # @param which [:all|:ary|:rnd|:seq|:spr] The parts to represent.
+    # @param which [:all|:ary|:nsq|:rnd|:seq|:spr] The parts to represent.
+    #  (:nsq since 2.1.0)
     # @since 2.0.0
     def to_h (which = :all)
 	hsh = {}
 	case which when :all, :ary, :seq
 	    @seq.each_index { |i| hsh[i] = @seq[i] }
 	end
-	case which when :all, :ary, :spr then hsh.merge! @spr end
-	case which when :all, :rnd then hsh.merge! @rnd end
+	case which when :all, :ary, :nsq, :spr then hsh.merge! @spr end
+	case which when :all, :nsq, :rnd then hsh.merge! @rnd end
 	hsh
     end
 
@@ -1346,13 +1381,14 @@ class Sarah
 
     # Return an array of values.
     #
-    # @param which [:all|:ary|:rnd|:seq|:spr] Which values to return.
-    #  (Since 2.0.0)
+    # @param which [:all|:ary|:nsq|:rnd|:seq|:spr] Which values to return.
+    #  (Since 2.0.0; :nsq since 2.1.0)
     # @return [Array]
     def values (which = :all)
 	case which
 	when :all then @seq + values(:spr) + @rnd.values
 	when :ary then @seq + values(:spr)
+	when :nsq then values(:spr) + @rnd.values
 	when :rnd then @rnd.values
 	when :seq then Array.new @seq
 	when :spr then @spr.values_at(*@spr.keys.sort)

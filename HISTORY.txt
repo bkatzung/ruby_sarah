@@ -1,3 +1,14 @@
+2014-04-10 Version 2.1.0
+
+	Added :nsq (non-sequential = sparse + random) selector for
+	#length/#size, #keys, #values, #to_a, and #to_h.
+
+	Fixed some deprecated methods to have pre-2.0.0 behavior after
+	2.0.0 changes (i.e. :nsq versus :rnd differences).
+
+	Added #reindex method to reindex sparse values (like #compact!
+	but without nil removal).
+
 2014-04-01 Version 2.0.1
 
 	Fixed incorrect indexes in "Background" section of comments.
