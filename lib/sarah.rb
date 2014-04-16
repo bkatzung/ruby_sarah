@@ -60,11 +60,11 @@
 # @author Brian Katzung (briank@kappacs.com), Kappa Computer Solutions, LLC
 # @copyright 2013-2014 Brian Katzung and Kappa Computer Solutions, LLC
 # @license MIT License
-# @version 2.1.0
+# @version 2.2.0
 
 class Sarah
 
-    VERSION = "2.1.0"
+    VERSION = "2.2.0"
 
     # Private attributes:
     # seq [Array] An array of (zero-origin) sequential values.
@@ -550,17 +550,17 @@ class Sarah
     #
     # (#each_key alias since 2.0.0)
     #
-    # @param which [:all|:ary|:rnd|:seq|:spr] The data structures over
-    #  which to iterate. (Since 2.0.0)
+    # @param which [:all|:ary|:nsq|:rnd|:seq|:spr] The data structures over
+    #  which to iterate. (Since 2.0.0; :nsq since 2.2.0)
     # @return [Sarah]
     def each (which = :all)
 	case which when :all, :ary, :seq
 	    @seq.each_index { |i| yield i, @seq[i] }
 	end
-	case which when :all, :ary, :spr
+	case which when :all, :ary, :nsq, :spr
 	    @spr.keys.sort.each { |i| yield i, @spr[i] }
 	end
-	case which when :all, :rnd
+	case which when :all, :nsq, :rnd
 	    @rnd.each { |key, value| yield key, value }
 	end
 	self
@@ -574,13 +574,15 @@ class Sarah
 
     # Is the array (or are parts of it) empty?
     #
-    # @param which [:all|:ary|:rnd|:seq|:spr] When data structures to check
+    # @param which [:all|:ary|:nsq|:rnd|:seq|:spr] Which data structures to
+    #  check. (:nsq since 2.2.0)
     # @return [Boolean]
     # @since 2.0.0
     def empty? (which = :all)
 	case which
 	when :all then @seq.empty? && @spr.empty? && @rnd.empty?
 	when :ary then @seq.empty? && @spr.empty?
+	when :nsq then @spr.empty? && @rnd.empty?
 	when :rnd then @rnd.empty?
 	when :seq then @seq.empty?
 	when :spr then @spr.empty?
