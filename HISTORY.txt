@@ -1,3 +1,10 @@
+2014-04-26 Version 3.0.0
+
+	#concat is now an alias for #append!. It was mistakenly an alias
+	for #+ in 2.x.x.
+
+	Fixed indexing for #push to sparse array.
+
 2014-04-11 Version 2.2.0
 
 	Also allow :nsq selector for #each and #empty?.

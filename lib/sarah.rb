@@ -60,11 +60,11 @@
 # @author Brian Katzung (briank@kappacs.com), Kappa Computer Solutions, LLC
 # @copyright 2013-2014 Brian Katzung and Kappa Computer Solutions, LLC
 # @license MIT License
-# @version 2.2.0
+# @version 3.0.0
 
 class Sarah
 
-    VERSION = "2.2.0"
+    VERSION = "3.0.0"
 
     # Private attributes:
     # seq [Array] An array of (zero-origin) sequential values.
@@ -203,12 +203,13 @@ class Sarah
     # Return a new Sarah that is the concatenation of this one and
     # another object.
     #
-    # (#+ alias since 2.0.0)
+    # Note: #concat was incorrectly aliased to #+ in 2.x.x. #concat is
+    # actually an alias for #append!.
+    #
+    # @since 2.0.0
     def + (other)
 	new_similar(:from => self).append!(other)
     end
-
-    alias_method :concat, :+
 
     # Compute the array difference with another object.
     #
@@ -236,10 +237,7 @@ class Sarah
     def << (*vlist)
 	if !@spr.empty?
 	    # Sparse push
-	    vlist.each do |value|
-		self[@ary_next] = value
-		@ary_next += 1
-	    end
+	    vlist.each { |value| self[@ary_next] = value }
 	else
 	    # Sequential push
 	    @seq.push *vlist
@@ -335,6 +333,8 @@ class Sarah
 
     # Append arrays or Sarahs and merge hashes.
     #
+    # (#concat alias since 3.0.0)
+    #
     # @param ahlist [Array<Array, Hash, Sarah>] The structures to append.
     # @return [Sarah]
     def append! (*ahlist)
@@ -350,6 +350,8 @@ class Sarah
 	end
 	self
     end
+
+    alias_method :concat, :append!
 
     # Return the first associated array. See Array#assoc and Hash#assoc.
     # The result is always in Array#assoc format.
@@ -385,8 +387,6 @@ class Sarah
 	case which when :all, :rnd then @rnd = {} end
 	self
     end
-
-    # #collect and #collect! are not implemented, but see #ary_collect!.
 
     # Collect (map) in-place. The block (required) is passed the current
     # value and the index/key (in that order). The return value of the

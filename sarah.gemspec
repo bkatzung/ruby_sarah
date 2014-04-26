@@ -1,7 +1,7 @@
 Gem::Specification.new do |s|
   s.name         = "sarah"
-  s.version      = "2.2.0"
-  s.date         = "2014-04-11"
+  s.version      = "3.0.0"
+  s.date         = "2014-04-26"
   s.authors      = ["Brian Katzung"]
   s.email        = ["briank@kappacs.com"]
   s.homepage     = "http://rubygems.org/gems/sarah"
